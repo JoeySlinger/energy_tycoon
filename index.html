@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Energy Tycoon: Ages of Power</title>
     <style>
         :root {
@@ -15,6 +15,7 @@
             --btn-disabled: #333;
         }
 
+        /* FIXED SCROLLING LOGIC */
         body {
             margin: 0; padding: 0;
             font-family: 'Courier New', Courier, monospace;
@@ -23,8 +24,11 @@
             background-attachment: fixed;
             image-rendering: pixelated;
             transition: background 0.8s ease;
-            display: flex; flex-direction: column; height: 100vh;
-            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh; /* Allow content to grow */
+            overflow-x: hidden;
+            overflow-y: auto; /* Enable vertical scroll */
         }
 
         /* BACKGROUND TIER LOGIC */
@@ -35,11 +39,12 @@
 
         .dashboard-header {
             display: flex; flex-direction: column; align-items: center;
-            padding: 10px 0; background: rgba(0,0,0,0.7); border-bottom: 3px solid #000;
+            padding: 10px 0; background: rgba(0,0,0,0.8); border-bottom: 3px solid #000;
+            position: sticky; top: 0; z-index: 100;
         }
 
         .main-logo {
-            max-width: 180px; width: 45%; height: auto; max-height: 75px; margin-bottom: 5px;
+            max-width: 180px; width: 45%; height: auto; max-height: 70px; margin-bottom: 5px;
             filter: drop-shadow(1px 0 0 #2e3235) drop-shadow(-1px 0 0 #2e3235) drop-shadow(0 1px 0 #2e3235) drop-shadow(0 -1px 0 #2e3235);
         }
 
@@ -78,7 +83,7 @@
         @media (max-width: 700px) {
             #main-stage { flex-direction: column; align-items: center; padding: 10px; }
             #grid { grid-template-columns: repeat(6, 14vw); grid-template-rows: repeat(6, 14vw); max-width: 90vw; }
-            #grid-frame { width: fit-content; margin: 0 auto; }
+            #grid-frame { width: fit-content; margin: 0 auto 20px; }
             #console-panel { width: 92vw !important; margin: 0 auto; height: auto !important; min-height: 420px; }
         }
 
@@ -94,19 +99,19 @@
         }
 
         .panel-header { background: #111; padding: 10px; border-bottom: 2px solid #444; font-weight: bold; text-align: center; color: var(--accent); font-size: 1.1rem; }
-        .scroll-area { flex: 1; overflow-y: auto; padding: 12px; }
+        .scroll-area { flex: 1; overflow-y: auto; padding: 12px; -webkit-overflow-scrolling: touch; }
 
         .data-row { display: flex; justify-content: space-between; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #333; }
         .data-label { color: #888; font-size: 0.85rem; }
 
         .action-footer {
             background: #15171a; border-top: 3px solid #000;
-            padding: 12px; display: grid; grid-template-columns: 1fr; gap: 10px;
+            padding: 12px; display: flex; flex-direction: column; gap: 10px;
         }
 
         .funny-sub { font-size: 0.75rem; color: #777; font-style: italic; display: block; margin-top: 4px; line-height: 1.2; }
 
-        #footer-news { height: 35px; background: #000; border-top: 2px solid #333; overflow: hidden; line-height: 35px; font-size: 1rem; }
+        #footer-news { height: 35px; background: #000; border-top: 2px solid #333; overflow: hidden; line-height: 35px; font-size: 1rem; flex-shrink: 0; }
         #ticker-text { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 25s linear infinite; color: var(--accent); font-weight: bold; }
         @keyframes ticker { 0% { transform: translate(0, 0); } 100% { transform: translate(-150%, 0); } }
 
@@ -165,7 +170,7 @@
     </div>
 </main>
 
-<footer id="footer-news"><div id="ticker-text">... BOOTING MAD SCIENCE INTERFACE ...</div></footer>
+<footer id="footer-news"><div id="ticker-text">... BOOTING FLUID MOBILE INTERFACE ...</div></footer>
 
 <script>
     const PLANTS = [
@@ -187,7 +192,16 @@
         { id: 15, name: "Cosmic Void Converter", cost: 500000000000000, prod: 150000000000, img: "void_converter.jpg", tier: 4, rarity: 50 }
     ];
 
-    let state = { money: 1000, tier: 1, grid: Array(36).fill(null), selectedIdx: null, tech: { gridLv: 0, interns: 0, tax: 0, caffeine: 0, bribe: 0, greenwash: 0, spag: 0, substationUnlocked: false }, mute: false, lastSaved: Date.now() };
+    const NEWS_JOKES = [
+        "Local man spaghettified while checking Gravitational Siphon.",
+        "Breaking: Interns demand 'Actual Oxygen' in the breakroom.",
+        "Smog levels reach 'Art Gallery' quality, say investors.",
+        "Dyson Sphere blocks favorite star of local astronomer; lawsuit pending.",
+        "Fusion reactor hums 'Happy Birthday' to its lead scientist.",
+        "Shadow Realm Data Centers technically don't exist, says auditor."
+    ];
+
+    let state = { money: 1000, tier: 1, grid: Array(36).fill(null), selectedIdx: null, tech: { gridLv: 0, interns: 0, tax: 0, caffeine: 0, bribe: 0, yoga: 0, anchor: 0, substationUnlocked: false }, mute: false, lastSaved: Date.now() };
     const sounds = { buy: new Audio('assets/buy.mp3'), hum: new Audio('assets/hum.mp3') };
     sounds.hum.loop = true;
 
@@ -201,14 +215,16 @@
     }
 
     window.onload = () => {
-        const saved = localStorage.getItem('energyTycoon_MadScience_v1');
+        const saved = localStorage.getItem('energyTycoon_MobileScroll_v1');
         if (saved) { state = JSON.parse(saved); calculateOfflineEarnings(); }
         createGrid(); renderGrid(); updateUI();
         setInterval(gameLoop, 100);
         setInterval(saveGame, 5000);
+        setInterval(updateTicker, 15000);
+        updateTicker();
     };
 
-    function saveGame() { state.lastSaved = Date.now(); localStorage.setItem('energyTycoon_MadScience_v1', JSON.stringify(state)); }
+    function saveGame() { state.lastSaved = Date.now(); localStorage.setItem('energyTycoon_MobileScroll_v1', JSON.stringify(state)); }
 
     function calculateOfflineEarnings() {
         const now = Date.now();
@@ -216,8 +232,8 @@
         if (secondsAway < 60) return;
         let totalPPS = 0;
         state.grid.forEach(c => { if(c && !PLANTS[c.id].isSpecial) totalPPS += (PLANTS[c.id].prod * Math.pow(2, c.level - 1)); });
-        const generation = totalPPS * (1 + state.tech.gridLv * 0.1) * (1 + state.tech.interns * 0.05);
-        const earned = (generation * secondsAway) * (1 + state.tech.tax * 0.1 + state.tech.greenwash * 0.05);
+        const generation = totalPPS * (1 + state.tech.gridLv * 0.1) * (1 + state.tech.interns * 0.05 + state.tech.yoga * 0.05);
+        const earned = (generation * secondsAway) * (1 + state.tech.tax * 0.1 + state.tech.bribe * 0.05);
         state.money += earned;
         showAwayReport(secondsAway, earned);
     }
@@ -304,12 +320,10 @@
     function gameLoop() {
         let total = 0;
         state.grid.forEach((c) => { if(c && !PLANTS[c.id].isSpecial) total += (PLANTS[c.id].prod * Math.pow(2, c.level - 1)); });
-        const generation = total * (1 + state.tech.gridLv * 0.1) * (1 + state.tech.interns * 0.05) * (1 + state.tech.caffeine * 0.1);
-        const cashMult = 1 + (state.tech.tax * 0.1) + (state.tech.bribe * 0.05) + (state.tech.greenwash * 0.05);
-        state.money += (generation / 10) * cashMult;
+        const generation = total * (1 + state.tech.gridLv * 0.1) * (1 + state.tech.interns * 0.05 + state.tech.yoga * 0.05);
+        state.money += (generation / 10) * (1 + state.tech.tax * 0.1 + state.tech.bribe * 0.05);
         document.getElementById('money').innerText = format(state.money);
         document.getElementById('pps').innerText = format(generation, true);
-        
         if (!document.getElementById('ins-shop').classList.contains('hidden')) {
             document.querySelectorAll('#shop-items .pixel-btn').forEach(b => b.disabled = state.money < PLANTS[b.dataset.id].cost);
         }
@@ -347,17 +361,14 @@
         }
         if (!state.tech.substationUnlocked) createTech(cont, "UNLOCK SUBSTATIONS", 100000, "Engineering for the elite.", () => state.tech.substationUnlocked = true);
         
-        createTech(cont, "INTERN TREADMILLS", 5000 * Math.pow(3, state.tech.interns), "Digital labor is free power. +5% Power.", () => state.tech.interns++);
-        createTech(cont, "QUANTUM TAX EVASION", 15000 * Math.pow(5, state.tech.tax), "Ignoring IRS laws of physics. +10% Cash.", () => state.tech.tax++);
-        createTech(cont, "SOOT GREENWASHING", 8000 * Math.pow(2, state.tech.greenwash), "Smoke is just 'artistic clouds'. +5% Cash.", () => state.tech.greenwash++);
-        
-        if (state.tier >= 3) {
-            createTech(cont, "SPAGHETTIFICATION INSURANCE", 500000000 * Math.pow(10, state.tech.spag), "Liability protection for void workers. +20% Power.", () => state.tech.spag++);
-        }
+        createTech(cont, "MANDATORY OFFICE YOGA", 5000 * Math.pow(3, state.tech.yoga), "Worker flexibility leads to generator flexibility. +5% Gen.", () => state.tech.yoga++);
+        createTech(cont, "QUANTUM TAX LOOPHOLES", 15000 * Math.pow(5, state.tech.tax), "If the money is in a box, is it really taxable? +10% Cash.", () => state.tech.tax++);
+        createTech(cont, "REALITY ANCHOR BOLTS", 25000 * Math.pow(6, state.tech.anchor), "Keep your grid from drifting into the 5th dimension. +10% Power.", () => state.tech.anchor++);
+        createTech(cont, "BRIBE THE GRID INSPECTOR", 8000 * Math.pow(2, state.tech.bribe), "Pay him to look away while you double-bill. +5% Cash.", () => state.tech.bribe++);
     }
 
     function createTech(cont, label, cost, sub, action) {
-        const div = document.createElement('div'); div.style.marginBottom = "10px";
+        const div = document.createElement('div'); div.style.marginBottom = "15px";
         const b = document.createElement('button'); b.className = 'pixel-btn'; b.dataset.cost = cost;
         b.disabled = state.money < cost;
         b.innerHTML = `<div style="display:flex; justify-content:space-between"><span>${label}</span> <span>$${format(cost)}</span></div>`;
@@ -383,6 +394,7 @@
     function updateUI() { document.body.setAttribute('data-tier', state.tier); document.getElementById('logo').src = `assets/logo${state.tier}.png`; }
     function toggleMute() { state.mute = !state.mute; document.getElementById('mute-toggle').innerText = state.mute ? "🔇" : "🔊"; if(state.mute) sounds.hum.pause(); }
     function playSound(n) { if(!state.mute) sounds[n].play(); }
+    function updateTicker() { document.getElementById('ticker-text').innerText = NEWS_JOKES[Math.floor(Math.random()*NEWS_JOKES.length)]; }
 </script>
 </body>
 </html>
