@@ -23,14 +23,15 @@
             background-attachment: fixed;
             image-rendering: pixelated;
             transition: background 0.8s ease;
-            display: flex; flex-direction: column; min-height: 100vh;
-            overflow-x: hidden; 
+            display: flex; flex-direction: column; height: 100vh;
+            overflow: hidden; 
         }
 
         /* BACKGROUND TIER LOGIC */
         body[data-tier="1"] { background: url('assets/texture1.jpg') repeat; --accent: #ffae00; }
         body[data-tier="2"] { background: url('assets/texture2.jpg') repeat; --accent: #00f2ff; }
         body[data-tier="3"] { background: url('assets/texture3.jpg') repeat; --accent: #bd00ff; }
+        body[data-tier="4"] { background: url('assets/texture4.jpg') repeat; --accent: #ff0055; }
 
         .dashboard-header {
             display: flex; flex-direction: column; align-items: center;
@@ -72,22 +73,11 @@
         }
 
         #grid-frame { background: #000; padding: 8px; border: 3px solid #333; box-shadow: 4px 4px 0 rgba(0,0,0,0.5); }
-        
-        #grid { 
-            display: grid; 
-            grid-template-columns: repeat(6, 50px); 
-            grid-template-rows: repeat(6, 50px); 
-            gap: 4px; 
-        }
+        #grid { display: grid; grid-template-columns: repeat(6, 50px); grid-template-rows: repeat(6, 50px); gap: 4px; }
 
-        /* MOBILE ALIGNMENT FIX */
         @media (max-width: 700px) {
             #main-stage { flex-direction: column; align-items: center; padding: 10px; }
-            #grid { 
-                grid-template-columns: repeat(6, 14vw); 
-                grid-template-rows: repeat(6, 14vw); 
-                max-width: 90vw;
-            }
+            #grid { grid-template-columns: repeat(6, 14vw); grid-template-rows: repeat(6, 14vw); max-width: 90vw; }
             #grid-frame { width: fit-content; margin: 0 auto; }
             #console-panel { width: 92vw !important; margin: 0 auto; height: auto !important; min-height: 420px; }
         }
@@ -97,7 +87,6 @@
         .cell img { width: 85%; height: 85%; object-fit: contain; display: block; margin: 7.5% auto; }
         .lv-tag { position: absolute; bottom: 1px; right: 1px; font-size: 7px; background: #000; color: var(--accent); padding: 0 2px; }
 
-        /* CONSOLE PANEL */
         #console-panel {
             width: 360px; height: 480px; background: var(--panel-bg);
             border: 4px solid var(--panel-border); box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
@@ -115,6 +104,8 @@
             padding: 12px; display: grid; grid-template-columns: 1fr; gap: 10px;
         }
 
+        .funny-sub { font-size: 0.75rem; color: #777; font-style: italic; display: block; margin-top: 4px; line-height: 1.2; }
+
         #footer-news { height: 35px; background: #000; border-top: 2px solid #333; overflow: hidden; line-height: 35px; font-size: 1rem; }
         #ticker-text { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 25s linear infinite; color: var(--accent); font-weight: bold; }
         @keyframes ticker { 0% { transform: translate(0, 0); } 100% { transform: translate(-150%, 0); } }
@@ -128,7 +119,7 @@
     <img id="logo" src="assets/logo1.png" class="main-logo">
     <div class="stats-pill">
         <div class="stat-item money">💵 <span id="money">0</span></div>
-        <div class="stat-item power">⚡ <span id="pps">0</span> <small style="font-size:0.7rem">W/s</small></div>
+        <div class="stat-item power">⚡ <span id="pps">0</span></div>
         <div id="mute-toggle" onclick="toggleMute()" style="cursor:pointer; font-size: 1.2rem;">🔊</div>
     </div>
     <nav class="tab-menu">
@@ -145,7 +136,6 @@
             <div class="scroll-area" id="console-content">
                 <div id="ins-welcome" style="text-align: center; padding-top: 50px; color: #666;">
                     <p>TAP A GRID SECTOR</p>
-                    <p style="font-size: 0.7rem;">READY FOR COMMANDS</p>
                 </div>
                 <div id="ins-shop" class="hidden"><div id="shop-items"></div></div>
                 <div id="ins-manage" class="hidden">
@@ -175,40 +165,50 @@
     </div>
 </main>
 
-<footer id="footer-news"><div id="ticker-text">CONNECTING TO GLOBAL ENERGY MARKET...</div></footer>
+<footer id="footer-news"><div id="ticker-text">... BOOTING MAD SCIENCE INTERFACE ...</div></footer>
 
 <script>
     const PLANTS = [
-        { id: 0, name: "Rusty Coal Reactor", cost: 250, prod: 1, img: "rusty-coal.jpg", tier: 1 },
-        { id: 1, name: "Heavy Combustion Gen", cost: 2250, prod: 8, img: "combustion_generator.jpg", tier: 1 },
-        { id: 2, name: "Fission Power Plant", cost: 15000, prod: 55, img: "fission_power.jpg", tier: 1 },
-        { id: 3, name: "Advanced Renewables", cost: 100000, prod: 250, img: "renewables.jpg", tier: 1 },
-        { id: 4, name: "Tokamak Fusion", cost: 600000, prod: 1500, img: "fusion.jpg", tier: 2 },
-        { id: 5, name: "Zero-Point Module", cost: 5000000, prod: 10000, img: "zero-point.jpg", tier: 2 },
-        { id: 6, name: "Antimatter Unit", cost: 40000000, prod: 60000, img: "antimatter.jpg", tier: 2 },
-        { id: 7, name: "Orbital Satellite", cost: 250000000, prod: 450000, img: "solar.jpg", tier: 3 },
-        { id: 8, name: "Star Lifter", cost: 3000000000, prod: 5000000, img: "star_station.jpg", tier: 3 },
-        { id: 9, name: "Dyson Sphere", cost: 75000000000, prod: 100000000, img: "dyson.jpg", tier: 3 },
-        { id: 10, name: "Substation", cost: 20000, prod: 0, img: "substation.jpg", tier: 1, isSpecial: true }
+        { id: 0, name: "Rusty Coal Reactor", cost: 250, prod: 1, img: "rusty-coal.jpg", tier: 1, rarity: 1 },
+        { id: 1, name: "Heavy Combustion Gen", cost: 2250, prod: 8, img: "combustion_generator.jpg", tier: 1, rarity: 2 },
+        { id: 2, name: "Fission Power Plant", cost: 15000, prod: 55, img: "fission_power.jpg", tier: 1, rarity: 3 },
+        { id: 3, name: "Advanced Renewables", cost: 100000, prod: 250, img: "renewables.jpg", tier: 1, rarity: 4 },
+        { id: 4, name: "Tokamak Fusion", cost: 600000, prod: 1500, img: "fusion.jpg", tier: 2, rarity: 5 },
+        { id: 5, name: "Zero-Point Module", cost: 5000000, prod: 10000, img: "zero-point.jpg", tier: 2, rarity: 6 },
+        { id: 6, name: "Antimatter Unit", cost: 40000000, prod: 60000, img: "antimatter.jpg", tier: 2, rarity: 7 },
+        { id: 7, name: "Orbital Satellite", cost: 250000000, prod: 450000, img: "solar.jpg", tier: 3, rarity: 8 },
+        { id: 8, name: "Star Lifter", cost: 3000000000, prod: 5000000, img: "star_station.jpg", tier: 3, rarity: 9 },
+        { id: 9, name: "Dyson Sphere", cost: 75000000000, prod: 100000000, img: "dyson.jpg", tier: 3, rarity: 10 },
+        { id: 10, name: "Substation", cost: 20000, prod: 0, img: "substation.jpg", tier: 1, isSpecial: true, rarity: 1 },
+        { id: 11, name: "Gravitational Siphon", cost: 500000000000, prod: 800000000, img: "gravitational_siphon.jpg", tier: 4, rarity: 15 },
+        { id: 12, name: "Singularity Extractor", cost: 2500000000000, prod: 4500000000, img: "singularity_extractor.jpg", tier: 4, rarity: 20 },
+        { id: 13, name: "Event Horizon Refinery", cost: 15000000000000, prod: 12000000000, img: "event_horizon_refinery.jpg", tier: 4, rarity: 25 },
+        { id: 14, name: "Hawking Harvester", cost: 80000000000000, prod: 35000000000, img: "hawking_radiation_harvester.jpg", tier: 4, rarity: 30 },
+        { id: 15, name: "Cosmic Void Converter", cost: 500000000000000, prod: 150000000000, img: "void_converter.jpg", tier: 4, rarity: 50 }
     ];
 
-    const NEWS = ["Coal is 'vintage solar'.", "AI Interns demand RAM.", "Smog: The sunset's filter.", "Fusion is always 30 years away."];
-
-    let state = { money: 500, tier: 1, grid: Array(36).fill(null), selectedIdx: null, tech: { gridLv: 0, interns: 0, tax: 0, caffeine: 0, bribe: 0, substationUnlocked: false }, mute: false, lastSaved: Date.now() };
+    let state = { money: 1000, tier: 1, grid: Array(36).fill(null), selectedIdx: null, tech: { gridLv: 0, interns: 0, tax: 0, caffeine: 0, bribe: 0, greenwash: 0, spag: 0, substationUnlocked: false }, mute: false, lastSaved: Date.now() };
     const sounds = { buy: new Audio('assets/buy.mp3'), hum: new Audio('assets/hum.mp3') };
     sounds.hum.loop = true;
 
+    function format(num, isPower = false) {
+        if (num === 0) return "0";
+        const prefixes = isPower ? ['', 'k', 'M', 'G', 'T', 'P', 'E'] : ['', 'K', 'M', 'B', 'T', 'Q', 'Qi'];
+        const suffix = isPower ? 'W' : '';
+        const i = Math.floor(Math.log10(Math.abs(num)) / 3);
+        if (i <= 0) return Math.floor(num) + suffix;
+        return (num / Math.pow(1000, i)).toFixed(2).replace(/\.00$/, '') + prefixes[i] + suffix;
+    }
+
     window.onload = () => {
-        const saved = localStorage.getItem('energyTycoon_MobileCentred_v1');
+        const saved = localStorage.getItem('energyTycoon_MadScience_v1');
         if (saved) { state = JSON.parse(saved); calculateOfflineEarnings(); }
         createGrid(); renderGrid(); updateUI();
         setInterval(gameLoop, 100);
         setInterval(saveGame, 5000);
-        setInterval(updateTicker, 15000);
-        updateTicker();
     };
 
-    function saveGame() { state.lastSaved = Date.now(); localStorage.setItem('energyTycoon_MobileCentred_v1', JSON.stringify(state)); }
+    function saveGame() { state.lastSaved = Date.now(); localStorage.setItem('energyTycoon_MadScience_v1', JSON.stringify(state)); }
 
     function calculateOfflineEarnings() {
         const now = Date.now();
@@ -216,9 +216,8 @@
         if (secondsAway < 60) return;
         let totalPPS = 0;
         state.grid.forEach(c => { if(c && !PLANTS[c.id].isSpecial) totalPPS += (PLANTS[c.id].prod * Math.pow(2, c.level - 1)); });
-        const generation = totalPPS * (1 + state.tech.gridLv * 0.1) * (1 + state.tech.interns * 0.05) * (1 + state.tech.caffeine * 0.1);
-        const cashMult = 1 + (state.tech.tax * 0.1) + (state.tech.bribe * 0.05);
-        const earned = (generation * secondsAway) * cashMult;
+        const generation = totalPPS * (1 + state.tech.gridLv * 0.1) * (1 + state.tech.interns * 0.05);
+        const earned = (generation * secondsAway) * (1 + state.tech.tax * 0.1 + state.tech.greenwash * 0.05);
         state.money += earned;
         showAwayReport(secondsAway, earned);
     }
@@ -231,7 +230,7 @@
         document.getElementById('btn-upgrade').classList.add('hidden');
         document.getElementById('btn-deconstruct').classList.add('hidden');
         document.getElementById('away-time').innerText = Math.floor(time/60) + "m";
-        document.getElementById('away-cash').innerText = "$" + Math.floor(cash).toLocaleString();
+        document.getElementById('away-cash').innerText = "$" + format(cash);
     }
 
     function acknowledgeAway() {
@@ -280,7 +279,7 @@
         const cont = document.getElementById('shop-items'); cont.innerHTML = '';
         PLANTS.filter(p => p.tier <= state.tier && (p.id !== 10 || state.tech.substationUnlocked)).forEach(p => {
             const b = document.createElement('button'); b.className = 'pixel-btn'; b.style.marginBottom = "5px";
-            b.innerHTML = `<div style="display:flex; justify-content:space-between"><span>${p.name}</span> <span>$${p.cost.toLocaleString()}</span></div>`;
+            b.innerHTML = `<div style="display:flex; justify-content:space-between"><span>${p.name}</span> <span>$${format(p.cost)}</span></div>`;
             b.dataset.id = p.id;
             b.onclick = () => { if(state.money >= p.cost) { state.money -= p.cost; state.grid[state.selectedIdx] = { id: p.id, level: 1 }; playSound('buy'); selectCell(state.selectedIdx); }};
             cont.appendChild(b);
@@ -290,14 +289,15 @@
     function updateInspector() {
         const data = state.grid[state.selectedIdx]; if (!data) return;
         const p = PLANTS[data.id];
-        const upCost = Math.floor(p.cost * Math.pow(1.5, data.level));
+        const rarityMult = 1.5 + (p.rarity / 100);
+        const upCost = Math.floor(p.cost * Math.pow(rarityMult, data.level));
         const out = Math.floor(p.prod * Math.pow(2, data.level - 1));
         document.getElementById('ins-lv').innerText = p.isSpecial ? "STATIC" : `${data.level}/10`;
-        document.getElementById('ins-out').innerText = p.isSpecial ? "PASSIVE" : `${out.toLocaleString()} W/s`;
+        document.getElementById('ins-out').innerText = p.isSpecial ? "PASSIVE" : `${format(out, true)}`;
         const b = document.getElementById('btn-upgrade');
         if (!p.isSpecial) {
             b.disabled = state.money < upCost || data.level >= 10;
-            b.innerHTML = data.level >= 10 ? "MAXED" : `UPGRADE ($${upCost.toLocaleString()})`;
+            b.innerHTML = data.level >= 10 ? "MAXED" : `UPGRADE ($${format(upCost)})`;
         }
     }
 
@@ -305,10 +305,11 @@
         let total = 0;
         state.grid.forEach((c) => { if(c && !PLANTS[c.id].isSpecial) total += (PLANTS[c.id].prod * Math.pow(2, c.level - 1)); });
         const generation = total * (1 + state.tech.gridLv * 0.1) * (1 + state.tech.interns * 0.05) * (1 + state.tech.caffeine * 0.1);
-        const cashMult = 1 + (state.tech.tax * 0.1) + (state.tech.bribe * 0.05);
+        const cashMult = 1 + (state.tech.tax * 0.1) + (state.tech.bribe * 0.05) + (state.tech.greenwash * 0.05);
         state.money += (generation / 10) * cashMult;
-        document.getElementById('money').innerText = Math.floor(state.money).toLocaleString();
-        document.getElementById('pps').innerText = Math.floor(generation).toLocaleString();
+        document.getElementById('money').innerText = format(state.money);
+        document.getElementById('pps').innerText = format(generation, true);
+        
         if (!document.getElementById('ins-shop').classList.contains('hidden')) {
             document.querySelectorAll('#shop-items .pixel-btn').forEach(b => b.disabled = state.money < PLANTS[b.dataset.id].cost);
         }
@@ -340,34 +341,37 @@
 
     function renderTech() {
         const cont = document.getElementById('tech-container'); cont.innerHTML = '';
-        if (state.tier < 3) {
-            const cost = state.tier === 1 ? 250000 : 50000000;
-            createTech(cont, "EVOLVE AGE", cost, "Change the wallpaper and the prices.", () => { state.tier++; updateUI(); });
+        if (state.tier < 4) {
+            const cost = 250000 * Math.pow(4, state.tier - 1);
+            createTech(cont, "EVOLVE AGE", cost, "Change the wallpaper and bankrupt your planet.", () => { state.tier++; updateUI(); });
         }
-        if (!state.tech.substationUnlocked) createTech(cont, "UNLOCK SUBSTATIONS", 100000, "Why generate more when you can just spread it around?", () => state.tech.substationUnlocked = true);
+        if (!state.tech.substationUnlocked) createTech(cont, "UNLOCK SUBSTATIONS", 100000, "Engineering for the elite.", () => state.tech.substationUnlocked = true);
         
-        createTech(cont, "UNPAID INTERN TREADMILLS", 5000 * Math.pow(4, state.tech.interns), "Digital labor is the cleanest energy. +5% Power.", () => state.tech.interns++);
-        createTech(cont, "QUANTUM TAX LOOPHOLES", 15000 * Math.pow(6, state.tech.tax), "If money exists in a superposition, it's untaxable. +10% Cash.", () => state.tech.tax++);
-        createTech(cont, "CAFFEINE-INFUSED COOLANT", 3000 * Math.pow(3, state.tech.caffeine), "Add coffee to the pipes. Reactors never sleep. +10% Power.", () => state.tech.caffeine++);
-        createTech(cont, "BRIBE THE GRID INSPECTOR", 8000 * Math.pow(5, state.tech.bribe), "Pay him to look away while you double-bill. +5% Cash.", () => state.tech.bribe++);
-        createTech(cont, "OVERCLOCK THE INTERNET", 2000 * Math.pow(2, state.tech.gridLv), "Make the wires glow for the aesthetic. +10% Power.", () => state.tech.gridLv++);
+        createTech(cont, "INTERN TREADMILLS", 5000 * Math.pow(3, state.tech.interns), "Digital labor is free power. +5% Power.", () => state.tech.interns++);
+        createTech(cont, "QUANTUM TAX EVASION", 15000 * Math.pow(5, state.tech.tax), "Ignoring IRS laws of physics. +10% Cash.", () => state.tech.tax++);
+        createTech(cont, "SOOT GREENWASHING", 8000 * Math.pow(2, state.tech.greenwash), "Smoke is just 'artistic clouds'. +5% Cash.", () => state.tech.greenwash++);
+        
+        if (state.tier >= 3) {
+            createTech(cont, "SPAGHETTIFICATION INSURANCE", 500000000 * Math.pow(10, state.tech.spag), "Liability protection for void workers. +20% Power.", () => state.tech.spag++);
+        }
     }
 
     function createTech(cont, label, cost, sub, action) {
-        const div = document.createElement('div'); div.style.marginBottom = "15px";
+        const div = document.createElement('div'); div.style.marginBottom = "10px";
         const b = document.createElement('button'); b.className = 'pixel-btn'; b.dataset.cost = cost;
         b.disabled = state.money < cost;
-        b.innerHTML = `<div style="display:flex; justify-content:space-between"><span>${label}</span> <span>$${cost.toLocaleString()}</span></div>`;
+        b.innerHTML = `<div style="display:flex; justify-content:space-between"><span>${label}</span> <span>$${format(cost)}</span></div>`;
         b.onclick = () => { if(state.money >= cost) { state.money -= cost; action(); playSound('buy'); renderTech(); }};
         div.appendChild(b);
-        const s = document.createElement('span'); s.style.fontSize="0.7rem"; s.style.color="#777"; s.style.fontStyle="italic"; s.innerText = sub;
+        const s = document.createElement('span'); s.className = 'funny-sub'; s.innerText = sub;
         div.appendChild(s);
         cont.appendChild(div);
     }
 
     function upgradeSelected() {
         const data = state.grid[state.selectedIdx];
-        const cost = Math.floor(PLANTS[data.id].cost * Math.pow(1.5, data.level));
+        const rarityMult = 1.5 + (PLANTS[data.id].rarity / 100);
+        const cost = Math.floor(PLANTS[data.id].cost * Math.pow(rarityMult, data.level));
         if(state.money >= cost && data.level < 10) { state.money -= cost; data.level++; playSound('buy'); renderGrid(); updateInspector(); }
     }
 
@@ -377,7 +381,6 @@
     }
 
     function updateUI() { document.body.setAttribute('data-tier', state.tier); document.getElementById('logo').src = `assets/logo${state.tier}.png`; }
-    function updateTicker() { document.getElementById('ticker-text').innerText = NEWS[Math.floor(Math.random()*NEWS.length)]; }
     function toggleMute() { state.mute = !state.mute; document.getElementById('mute-toggle').innerText = state.mute ? "🔇" : "🔊"; if(state.mute) sounds.hum.pause(); }
     function playSound(n) { if(!state.mute) sounds[n].play(); }
 </script>
