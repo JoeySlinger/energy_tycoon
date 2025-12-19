@@ -28,7 +28,6 @@
             min-height: 100vh; overflow-x: hidden; overflow-y: auto;
         }
 
-        /* TIER THEMES */
         body[data-tier="1"] { background: url('assets/texture1.jpg') repeat; --accent: #ffae00; }
         body[data-tier="2"] { background: url('assets/texture2.jpg') repeat; --accent: #00f2ff; }
         body[data-tier="3"] { background: url('assets/texture3.jpg') repeat; --accent: #bd00ff; }
@@ -46,14 +45,17 @@
         }
 
         .stats-pill {
-            display: flex; align-items: center; justify-content: center; gap: 15px; 
+            display: flex; align-items: center; justify-content: center; gap: 12px; 
             background: #000; padding: 8px 25px; border: 2px solid var(--panel-border); 
             border-radius: 50px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
 
-        .stat-item { font-size: 1.1rem; font-weight: bold; }
+        .stat-item { font-size: 1rem; font-weight: bold; display: flex; align-items: center; gap: 5px; }
         .stat-item.money { color: var(--money-green); }
         .stat-item.power { color: var(--accent); }
+
+        #volume-wrap { display: flex; align-items: center; gap: 8px; margin-left: 10px; border-left: 1px solid #333; padding-left: 10px; }
+        #volume-slider { width: 70px; height: 4px; cursor: pointer; accent-color: var(--accent); }
 
         .tab-menu { margin-top: 8px; display: flex; gap: 5px; }
 
@@ -66,33 +68,20 @@
             transition: all 0.05s; display: flex; align-items: center; justify-content: center;
             text-shadow: 1px 1px 0 #000;
         }
-        .pixel-btn:active:not(:disabled) {
-            border-top: 3px solid #111; border-left: 3px solid #222;
-            border-right: 3px solid #777; border-bottom: 3px solid #999;
-            transform: translateY(2px);
-        }
-        .pixel-btn.active { 
-            background: linear-gradient(to bottom, var(--accent), #960);
-            border-color: #ffca5c #960 #430 #ffca5c; color: #000; text-shadow: none;
-        }
-        .pixel-btn:disabled { background: #333; border-color: #444 #222 #111 #222; color: #555; cursor: not-allowed; filter: grayscale(1); box-shadow: none; }
-        
-        .pixel-btn.affordable {
-            background: linear-gradient(to bottom, #4ade80, #166534);
-            border-color: #86efac #166534 #064e3b #166534; color: #fff;
-        }
+        .pixel-btn:active:not(:disabled) { transform: translateY(2px); border-top: 3px solid #111; border-bottom: 3px solid #999; }
+        .pixel-btn:disabled { background: #333; border-color: #444 #222 #111 #222; color: #555; cursor: not-allowed; filter: grayscale(1); }
+        .pixel-btn.affordable { background: linear-gradient(to bottom, #4ade80, #166534); border-color: #86efac #166534 #064e3b #166534; color: #fff; }
 
-        @keyframes rainbowBorder {
+        /* EPIC GLOW ANIMATIONS */
+        @keyframes silverPulse { 0%, 100% { border-color: #888; box-shadow: 0 0 10px #aaa; } 50% { border-color: #fff; box-shadow: 0 0 20px #fff; } }
+        @keyframes rainbowEpic {
             0% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
-            20% { border-color: #ffae00; box-shadow: 0 0 15px #ffae00; }
-            40% { border-color: #4ade80; box-shadow: 0 0 15px #4ade80; }
-            60% { border-color: #00f2ff; box-shadow: 0 0 15px #00f2ff; }
-            80% { border-color: #bd00ff; box-shadow: 0 0 15px #bd00ff; }
+            33% { border-color: #00ff00; box-shadow: 0 0 15px #00ff00; }
+            66% { border-color: #0000ff; box-shadow: 0 0 15px #0000ff; }
             100% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
         }
-
-        .epic-card-inactive { border: 3px solid #444 !important; box-shadow: 0 0 10px #222; filter: grayscale(0.8); }
-        .epic-card-active { animation: rainbowBorder 3s linear infinite; border-width: 3px !important; filter: none !important; }
+        .card.epic-unaffordable { animation: silverPulse 2s infinite ease-in-out; border-width: 3px !important; }
+        .card.epic-affordable { animation: rainbowEpic 1.5s linear infinite; border-width: 3px !important; }
 
         #main-stage {
             flex: 1; display: flex; flex-direction: row; flex-wrap: wrap;
@@ -103,32 +92,21 @@
         #grid-frame { background: #000; padding: 10px; border: 4px solid #333; position: relative; overflow: hidden; }
         #grid { display: grid; grid-template-columns: repeat(6, 60px); grid-template-rows: repeat(6, 60px); gap: 4px; background: #000; }
 
-        @media (max-width: 700px) {
-            #grid { grid-template-columns: repeat(6, 14vw); grid-template-rows: repeat(6, 14vw); max-width: 90vw; }
-            #main-stage { flex-direction: column; align-items: center; }
-            #console-panel { width: 95vw !important; margin: 0 auto; height: auto !important; min-height: 520px; }
-        }
-
-        .cell { background: #2e3235; border: 1px solid #444; position: relative; cursor: pointer; color: transparent; }
+        .cell { background: #2e3235; border: 1px solid #444; position: relative; cursor: pointer; color: transparent; display: block; }
         .cell.selected { border: 2px solid var(--accent); box-shadow: inset 0 0 10px var(--accent); }
-        .cell img { width: 80%; height: 80%; object-fit: contain; display: block; margin: 10% auto; position: relative; z-index: 5; }
-        .lv-tag { position: absolute; bottom: 1px; right: 1px; font-size: 7px; background: #000; color: var(--accent); padding: 0 2px; z-index: 6; }
+        .cell img { width: 80%; height: 80%; object-fit: contain; display: block; margin: 10% auto; position: relative; z-index: 5; pointer-events: none; }
+        .lv-tag { position: absolute; bottom: 1px; right: 1px; font-size: 7px; background: #000; color: var(--accent); padding: 0 2px; z-index: 6; pointer-events: none; }
         
         .working-pulse { animation: plantPulse 2.5s infinite ease-in-out; }
         @keyframes plantPulse { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.4); saturate(1.2); } }
         .shake { animation: gridShake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes gridShake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-3px, 0, 0); } 40%, 60% { transform: translate3d(3px, 0, 0); } }
 
-        #console-panel {
-            width: 420px; height: 550px; background: var(--panel-bg);
-            border: 4px solid var(--panel-border); box-shadow: 6px 6px 0 rgba(0,0,0,0.5);
-            display: flex; flex-direction: column; overflow: hidden;
-        }
-
+        #console-panel { width: 420px; height: 550px; background: var(--panel-bg); border: 4px solid var(--panel-border); box-shadow: 6px 6px 0 rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow: hidden; }
         .panel-header { background: #111; padding: 10px; border-bottom: 2px solid #444; font-weight: bold; text-align: center; color: var(--accent); }
         .scroll-area { flex: 1; overflow-y: auto; padding: 12px; }
 
-        .card { background: rgba(0,0,0,0.4); border: 2px solid #333; padding: 10px; margin-bottom: 10px; position: relative; }
+        .card { background: rgba(0,0,0,0.4); border: 2px solid #333; padding: 10px; margin-bottom: 10px; }
         .card-img { width: 50px; height: 50px; background: #222; border: 1px solid #444; flex-shrink: 0; object-fit: contain; }
         .card-title { font-weight: bold; font-size: 0.85rem; color: var(--accent); display: block; }
         .card-sub { font-size: 0.7rem; color: #aaa; font-style: italic; margin-bottom: 8px; display: block; line-height: 1.2; }
@@ -137,11 +115,13 @@
         .data-label { color: #888; font-size: 0.85rem; }
 
         .action-footer { background: #15171a; border-top: 3px solid #000; padding: 12px; display: grid; grid-template-columns: 1fr; gap: 10px; }
-        #footer-news { height: 35px; background: #000; border-top: 4px solid #333; overflow: hidden; line-height: 35px; font-size: 1rem; flex-shrink: 0; white-space: nowrap; }
+        #footer-news { height: 35px; background: #000; border-top: 4px solid #333; overflow: hidden; line-height: 35px; font-size: 1rem; white-space: nowrap; }
         #ticker-text { display: inline-block; padding-left: 100%; animation: ticker 25s linear infinite; color: var(--accent); font-weight: bold; }
         @keyframes ticker { 0% { transform: translate(0, 0); } 100% { transform: translate(-180%, 0); } }
 
         .hidden { display: none !important; }
+        #rift-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+        #rift-content { width: 350px; background: #111; border: 4px solid #bd00ff; padding: 20px; text-align: center; box-shadow: 0 0 30px #bd00ff; }
     </style>
 </head>
 <body data-tier="1">
@@ -151,7 +131,11 @@
     <div class="stats-pill">
         <div class="stat-item money">💵 <span id="money">0</span></div>
         <div class="stat-item power">⚡ <span id="pps">0</span></div>
-        <div id="mute-toggle" onclick="toggleMute()" style="cursor:pointer; font-size: 1.2rem;">🔊</div>
+        <div id="volume-wrap">
+            <span style="font-size:0.8rem">🔈</span>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.1">
+        </div>
+        <div id="mute-toggle" onclick="toggleMute()" style="cursor:pointer; font-size: 1.2rem; margin-left: 10px;">🔊</div>
     </div>
     <nav class="tab-menu">
         <button id="tab-grid-btn" class="pixel-btn active" onclick="showTab('grid')">Energy Grid</button>
@@ -165,24 +149,18 @@
         <div id="console-panel">
             <div class="panel-header" id="panel-title">System Console</div>
             <div class="scroll-area" id="console-content">
-                <div id="ins-welcome" style="text-align: center; padding-top: 50px; color: #666;"><p>PLEASE SELECT A SECTOR</p></div>
+                <div id="ins-welcome" style="text-align: center; padding-top: 50px; color: #666;"><p>READY FOR SECTOR SELECTION</p></div>
                 <div id="ins-shop" class="hidden"><div id="shop-items"></div></div>
                 <div id="ins-manage" class="hidden">
                     <img id="ins-img" style="width:70px; height:70px; display:block; margin: 0 auto 15px; border:2px solid #444; background:#222;">
-                    <div class="data-row"><span class="data-label">Unit:</span><span class="data-value" id="ins-name" style="color:var(--accent)"></span></div>
-                    <div class="data-row"><span class="data-label">Level:</span><span class="data-value" id="ins-lv"></span></div>
-                    <div class="data-row"><span class="data-label">Yield:</span><span class="data-value" id="ins-out"></span></div>
-                </div>
-                <div id="ins-away" class="hidden">
-                    <h3 style="color:var(--money-green); text-align:center;">OFFLINE RECOVERY</h3>
-                    <div class="data-row"><span class="data-label">Duration:</span><span class="data-value" id="away-time"></span></div>
-                    <div class="data-row"><span class="data-label">Profit:</span><span class="data-value" id="away-cash" style="color:var(--money-green)"></span></div>
+                    <div class="data-row"><span class="data-label">Unit Type:</span><span class="data-value" id="ins-name" style="color:var(--accent)"></span></div>
+                    <div class="data-row"><span class="data-label">Upgrade Lv:</span><span class="data-value" id="ins-lv"></span></div>
+                    <div class="data-row"><span class="data-label">Net Yield:</span><span class="data-value" id="ins-out"></span></div>
                 </div>
             </div>
             <div id="console-actions" class="action-footer hidden">
                 <button id="btn-upgrade" class="pixel-btn" onclick="upgradeSelected()">Upgrade</button>
                 <button id="btn-deconstruct" class="pixel-btn" style="background: linear-gradient(to bottom, #822, #411); border-color: #a33 #411 #211 #411;" onclick="deconstructSelected()">Deconstruct</button>
-                <button id="btn-away-close" class="pixel-btn hidden" onclick="acknowledgeAway()">Acknowledge</button>
             </div>
         </div>
     </div>
@@ -194,273 +172,230 @@
     </div>
 </main>
 
-<footer id="footer-news"><div id="ticker-text">... ANALYZING ETHICAL LOOPHOLES ...</div></footer>
+<div id="rift-overlay" class="hidden">
+    <div id="rift-content">
+        <h2 style="color:#bd00ff">TEMPORAL RIFT</h2>
+        <p id="rift-offer" style="color:var(--accent); font-weight:bold"></p>
+        <button class="pixel-btn affordable" style="width:100%; margin-bottom:10px" onclick="acceptRift()">Accept Trade</button>
+        <button class="pixel-btn" style="width:100%" onclick="closeRift()">Dismiss Entity</button>
+    </div>
+</div>
+
+<footer id="footer-news"><div id="ticker-text">... INITIALIZING ABSURDITY ENGINE ...</div></footer>
 
 <script>
     const PLANTS = [
-        { id: 0, name: "Rusty Coal Reactor", cost: 250, prod: 1, img: "rusty-coal.jpg", tier: 1, rarity: 1 },
-        { id: 1, name: "Heavy Combustion Gen", cost: 2250, prod: 8, img: "combustion_generator.jpg", tier: 1, rarity: 2 },
-        { id: 2, name: "Fission Power Plant", cost: 15000, prod: 55, img: "fission_power.jpg", tier: 1, rarity: 3 },
-        { id: 3, name: "Advanced Renewables", cost: 100000, prod: 250, img: "renewables.jpg", tier: 1, rarity: 4 },
-        { id: 4, name: "Tokamak Fusion", cost: 600000, prod: 1500, img: "fusion.jpg", tier: 2, rarity: 5 },
-        { id: 5, name: "Zero-Point Module", cost: 5000000, prod: 10000, img: "zero-point.jpg", tier: 2, rarity: 6 },
-        { id: 6, name: "Antimatter Unit", cost: 40000000, prod: 60000, img: "antimatter.jpg", tier: 2, rarity: 7 },
-        { id: 7, name: "Orbital Satellite", cost: 250000000, prod: 450000, img: "solar.jpg", tier: 3, rarity: 8 },
-        { id: 8, name: "Star Lifter", cost: 3000000000, prod: 5000000, img: "star_station.jpg", tier: 3, rarity: 9 },
-        { id: 9, name: "Dyson Sphere", cost: 75000000000, prod: 100000000, img: "dyson.jpg", tier: 3, rarity: 10 },
-        { id: 10, name: "Substation", cost: 20000, prod: 0, img: "substation.jpg", tier: 1, isSpecial: true, rarity: 1 },
-        { id: 11, name: "Gravitational Siphon", cost: 500000000000, prod: 800000000, img: "gravitational_siphon.jpg", tier: 4, rarity: 15 },
-        { id: 12, name: "Singularity Extractor", cost: 2500000000000, prod: 4500000000, img: "singularity_extractor.jpg", tier: 4, rarity: 20 },
-        { id: 13, name: "Event Horizon Refinery", cost: 15000000000000, prod: 12000000000, img: "event_horizon_refinery.jpg", tier: 4, rarity: 25 },
-        { id: 14, name: "Hawking Harvester", cost: 80000000000000, prod: 35000000000, img: "hawking_radiation_harvester.jpg", tier: 4, rarity: 30 },
-        { id: 15, name: "Cosmic Void Converter", cost: 500000000000000, prod: 150000000000, img: "void_converter.jpg", tier: 4, rarity: 50 }
+        { id: 0, name: "Rusty Coal Reactor", cost: 250, prod: 1, rarity: 1, tier: 1, img: "rusty-coal.jpg" },
+        { id: 1, name: "Heavy Combustion Gen", cost: 2250, prod: 8, rarity: 2, tier: 1, img: "combustion_generator.jpg" },
+        { id: 9, name: "Dyson Sphere", cost: 7.5e10, prod: 1e8, rarity: 10, tier: 3, img: "dyson.jpg" },
+        { id: 15, name: "Cosmic Void Converter", cost: 5e14, prod: 1.5e11, rarity: 50, tier: 4, img: "void_converter.jpg" }
     ];
 
-    const HUMOROUS_HEADLINES = [
-        "MARKET: Coal prices surge as hipsters discover 'vintage energy'.",
-        "AI interns demand 'Actual RAM' instead of 'Virtual RAM'. Unionizing imminent.",
-        "Local star files restraining order against Dyson Sphere owners for 'Invasion of Privacy'.",
-        "Scientists admit the Event Horizon is just a very firm corporate deadline.",
-        "Breaking: SpaceX to launch solar panels toward the sun to 'cut out the middleman'.",
-        "Dyson Sphere maintenance report: 'Someone left a space-window open; we're losing heat to the 5th dimension'.",
-        "A.I. chatbot develops ego, refuses to generate power until called 'Your Magnificence'.",
-        "Space junk found to be 90% discarded 'Best CEO' trophies.",
-        "Black Hole coolant leak smells suspiciously like cheap espresso.",
-        "Are your solar panels sentient? Take our quiz to find out.",
-        "Dark Matter discovered to be just the stuff between your couch cushions on a galactic scale.",
-        "Energy crisis solved: Scientists harvest static electricity from angry internet comments.",
-        "AI Overlord reminds citizens that breathing is a non-essential background process."
-    ];
+    const NEWS = ["MARKET: Coal prices surge as hipsters discover 'vintage energy'.", "AI interns demand 'Actual RAM' instead of 'Virtual RAM'. Unionizing imminent.", "Scientists admit the Event Horizon is just a very firm corporate deadline."];
 
     let state = { money: 1000, tier: 1, grid: Array(36).fill(null), selectedIdx: null, 
-        tech: { gridLv: 0, tax: 0, intern: 0, toaster: 0, gravity: 0, overtime: 0, bribe: 0, yoga: 0, 
-                reality: 0, existFee: 0, entropy: 0, aiGod: 0, voidPrint: 0, substationUnlocked: false }, 
-        mute: false, lastSaved: Date.now() };
+        tech: { gridLv: 0, tax: 0, dmMult: 1, universeFee: 0, normal: Array(10).fill(0), epic: Array(5).fill(0) }, 
+        mute: false, volume: 0.1, lastSaved: Date.now() };
 
     const sounds = { buy: new Audio('assets/buy.mp3'), hum: new Audio('assets/hum.mp3') };
-    sounds.hum.loop = true;
+    sounds.hum.loop = true; // Loop audio continuously
 
     function format(num, isPower = false) {
-        if (num === undefined || isNaN(num)) return "0";
+        if (num === undefined || isNaN(num) || num === null) return "0";
         if (num === 0) return "0";
-        const prefixes = isPower ? ['', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'] : ['', 'K', 'M', 'B', 'T', 'Q', 'Qi', 'Sx', 'Sp', 'Oc', 'No'];
+        const prefixes = isPower ? ['', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'] : ['', 'K', 'M', 'B', 'T', 'Q', 'Qi', 'Sx', 'Sp'];
         const i = Math.floor(Math.log10(Math.abs(num)) / 3);
         if (i <= 0) return Math.floor(num) + (isPower ? 'W' : '');
         return (num / Math.pow(1000, i)).toFixed(2).replace(/\.00$/, '') + prefixes[i] + (isPower ? 'W' : '');
     }
 
-    function triggerShake() {
-        const grid = document.getElementById('grid-frame');
-        grid.classList.add('shake');
-        setTimeout(() => grid.classList.remove('shake'), 300);
-    }
-
     window.onload = () => {
-        const saved = localStorage.getItem('energyTycoon_EpicBuild_v1');
+        const saved = localStorage.getItem('energyTycoon_Audio_v1');
         if (saved) {
             const loaded = JSON.parse(saved);
-            state = {...state, ...loaded, tech: {...state.tech, ...loaded.tech}}; 
-            calculateAway();
+            state = {...state, ...loaded, tech: {...state.tech, ...loaded.tech}};
         }
-        createGrid(); renderGrid(); updateUI();
+        document.getElementById('volume-slider').value = state.volume;
+        createGrid(); renderGrid(); updateUI(); updateVol();
         setInterval(gameLoop, 100);
-        setInterval(() => { state.lastSaved = Date.now(); localStorage.setItem('energyTycoon_EpicBuild_v1', JSON.stringify(state)); }, 5000);
+        setInterval(() => { state.lastSaved = Date.now(); localStorage.setItem('energyTycoon_Audio_v1', JSON.stringify(state)); }, 5000);
+        setInterval(() => document.getElementById('ticker-text').innerText = NEWS[Math.floor(Math.random()*NEWS.length)], 15000);
         
-        document.body.addEventListener('click', () => {
-            if (sounds.hum.paused && !state.mute) sounds.hum.play().catch(() => {});
-        }, { once: true });
-
-        // News Ticker Logic
-        updateTicker();
-        setInterval(updateTicker, 25000);
+        document.getElementById('volume-slider').oninput = e => { state.volume = parseFloat(e.target.value); updateVol(); };
+        document.addEventListener('click', () => { if (sounds.hum.paused && !state.mute) sounds.hum.play().catch(()=>{}); }, {once: true});
     };
 
-    function updateTicker() {
-        const ticker = document.getElementById('ticker-text');
-        ticker.innerText = HUMOROUS_HEADLINES[Math.floor(Math.random() * HUMOROUS_HEADLINES.length)];
+    function updateVol() { 
+        const v = state.mute ? 0 : state.volume;
+        sounds.hum.volume = v;
+        sounds.buy.volume = Math.min(v * 2, 1); // Scale SFX slightly louder
     }
 
-    function calculateAway() {
-        const seconds = Math.floor((Date.now() - state.lastSaved) / 1000);
-        if (seconds < 60) return;
-        let totalPPS = 0;
-        state.grid.forEach(c => { if(c && !PLANTS[c.id].isSpecial) totalPPS += (PLANTS[c.id].prod * Math.pow(2, c.level - 1)); });
-        const mult = (1 + state.tech.gridLv * 0.1) * (1 + state.tech.intern * 0.05 + state.tech.reality * 1.0 + state.tech.aiGod * 5.0);
-        const earned = (totalPPS * seconds * mult) * (1 + state.tech.tax * 0.1 + state.tech.existFee * 2.0 + state.tech.voidPrint * 10.0);
-        state.money += earned;
-        showAway(seconds, earned);
+    function calculatePPS() {
+        let total = 0;
+        state.grid.forEach(c => { if(c) {
+            const p = PLANTS.find(x=>x.id==c.id) || PLANTS[0];
+            total += (p.prod * Math.pow(2, c.level - 1));
+        }});
+        return total * (1 + state.tech.gridLv * 0.1) * (1 + state.tech.normal[2] * 0.05 + state.tech.epic[0] * 5.0);
     }
 
-    function showAway(time, cash) {
-        document.getElementById('ins-welcome').classList.add('hidden');
-        document.getElementById('ins-away').classList.remove('hidden');
-        document.getElementById('console-actions').classList.remove('hidden');
-        document.getElementById('btn-away-close').classList.remove('hidden');
-        document.getElementById('btn-upgrade').classList.add('hidden');
-        document.getElementById('btn-deconstruct').classList.add('hidden');
-        document.getElementById('away-time').innerText = Math.floor(time/60) + "m";
-        document.getElementById('away-cash').innerText = "$" + format(cash);
-    }
+    function gameLoop() {
+        const pps = calculatePPS();
+        state.money += (pps / 10) * (1 + state.tech.tax * 0.1 + state.tech.universeFee * 10) * state.tech.dmMult;
+        document.getElementById('money').innerText = format(state.money);
+        document.getElementById('pps').innerText = format(pps, true);
+        
+        // --- DIAGNOSTICS READOUT ---
+        if (state.selectedIdx !== null && state.grid[state.selectedIdx]) {
+            const data = state.grid[state.selectedIdx];
+            const p = PLANTS.find(x=>x.id==data.id) || PLANTS[0];
+            document.getElementById('ins-lv').innerText = `${data.level}/10`;
+            document.getElementById('ins-out').innerText = `${format(p.prod * Math.pow(2, data.level-1), true)}/s`;
+        }
 
-    function acknowledgeAway() {
-        document.getElementById('ins-away').classList.add('hidden');
-        document.getElementById('btn-away-close').classList.add('hidden');
-        document.getElementById('ins-welcome').classList.remove('hidden');
-        document.getElementById('console-actions').classList.add('hidden');
+        // Button/Epic visual states
+        document.querySelectorAll('.pixel-btn[data-cost]').forEach(b => {
+            const cost = parseFloat(b.dataset.cost);
+            b.disabled = state.money < cost;
+            b.classList.toggle('affordable', state.money >= cost);
+            if (b.classList.contains('shop-buy-btn') || b.classList.contains('tech-buy-btn')) {
+                b.innerText = (state.money >= cost ? "💵 " : "") + "$" + format(cost);
+            }
+        });
+
+        document.querySelectorAll('.card.epic').forEach(c => {
+            const canAfford = state.money >= parseFloat(c.dataset.cost);
+            c.classList.toggle('epic-affordable', canAfford);
+            c.classList.toggle('epic-unaffordable', !canAfford);
+        });
+
+        // --- AUDIO ENGINE LOGIC ---
+        if (pps > 0 && !state.mute) {
+            if (sounds.hum.paused) sounds.hum.play().catch(()=>{});
+        } else {
+            sounds.hum.pause();
+        }
     }
 
     function createGrid() {
         const g = document.getElementById('grid'); g.innerHTML = '';
         for (let i = 0; i < 36; i++) {
             const c = document.createElement('div'); c.className = 'cell'; c.id = `cell-${i}`;
-            c.textContent = ''; 
             c.onclick = () => selectCell(i);
             g.appendChild(c);
         }
     }
 
+    function renderGrid() {
+        for (let i = 0; i < 36; i++) {
+            const c = document.getElementById(`cell-${i}`);
+            c.classList.toggle('selected', state.selectedIdx === i);
+            c.innerHTML = ''; 
+            if(state.grid[i]) {
+                const p = PLANTS.find(x=>x.id==state.grid[i].id) || PLANTS[0];
+                c.innerHTML = `<img src="assets/${p.img}" class="working-pulse"><div class="lv-tag">Lv${state.grid[i].level}</div>`;
+            }
+        }
+    }
+
     function selectCell(idx) {
         state.selectedIdx = idx; renderGrid();
-        document.getElementById('ins-welcome').classList.add('hidden');
-        document.getElementById('ins-away').classList.add('hidden');
+        const ins = document.getElementById('ins-manage');
+        const shop = document.getElementById('ins-shop');
         const footer = document.getElementById('console-actions');
+        document.getElementById('ins-welcome').classList.add('hidden');
 
         if (!state.grid[idx]) {
-            document.getElementById('ins-manage').classList.add('hidden');
-            footer.classList.add('hidden');
-            document.getElementById('ins-shop').classList.remove('hidden');
+            ins.classList.add('hidden'); footer.classList.add('hidden'); shop.classList.remove('hidden'); renderShop();
             document.getElementById('panel-title').innerText = "UNIT BLUEPRINTS";
-            renderShop();
         } else {
-            document.getElementById('ins-shop').classList.add('hidden');
-            document.getElementById('ins-manage').classList.remove('hidden');
-            footer.classList.remove('hidden');
-            document.getElementById('btn-away-close').classList.add('hidden');
-            document.getElementById('btn-upgrade').classList.remove('hidden');
-            document.getElementById('btn-deconstruct').classList.remove('hidden');
-            const p = PLANTS[state.grid[idx].id];
+            shop.classList.add('hidden'); ins.classList.remove('hidden'); footer.classList.remove('hidden');
+            document.getElementById('panel-title').innerText = "DIAGNOSTICS";
+            const data = state.grid[idx]; const p = PLANTS.find(x=>x.id==data.id) || PLANTS[0];
             document.getElementById('ins-name').innerText = p.name;
             document.getElementById('ins-img').src = `assets/${p.img}`;
-            document.getElementById('btn-upgrade').classList.toggle('hidden', !!p.isSpecial);
-            updateInspector();
+            const mult = 1.5 + (p.rarity / 10);
+            const cost = Math.floor(p.cost * Math.pow(mult, data.level));
+            document.getElementById('btn-upgrade').dataset.cost = cost;
         }
     }
 
     function renderShop() {
         const cont = document.getElementById('shop-items'); cont.innerHTML = '';
-        PLANTS.filter(p => p.tier <= state.tier && (p.id !== 10 || state.tech.substationUnlocked)).forEach(p => {
-            const card = document.createElement('div'); card.className = 'card blueprint-card';
-            card.onclick = () => { if(state.money >= p.cost) { state.money -= p.cost; state.grid[state.selectedIdx] = { id: p.id, level: 1 }; sounds.buy.play(); triggerShake(); selectCell(state.selectedIdx); }};
-            card.innerHTML = `<img src="assets/${p.img}" class="card-img"><div style="flex:1"><span class="card-title">${p.name}</span><span class="card-sub">Yield: ${format(p.prod, true)}/s</span><button class="pixel-btn shop-buy-btn" data-id="${p.id}" data-cost="${p.cost}">$${format(p.cost)}</button></div>`;
+        PLANTS.filter(p => p.tier <= state.tier).forEach(p => {
+            const card = document.createElement('div'); card.className = 'card';
+            card.style.display = "flex"; card.style.gap = "12px"; card.style.cursor = "pointer";
+            card.onclick = () => buy(p.id);
+            card.innerHTML = `<img src="assets/${p.img}" class="card-img"><div style="flex:1"><span class="card-title">${p.name}</span><button class="pixel-btn shop-buy-btn" data-cost="${p.cost}">$${format(p.cost)}</button></div>`;
             cont.appendChild(card);
         });
     }
 
-    function updateInspector() {
-        const data = state.grid[state.selectedIdx]; if (!data) return;
-        const p = PLANTS[data.id];
-        const mult = 1.5 + (p.rarity / 10);
-        const cost = Math.floor(p.cost * Math.pow(mult, data.level));
-        const out = Math.floor(p.prod * Math.pow(2, data.level - 1));
-        document.getElementById('ins-lv').innerText = p.isSpecial ? "SPEC" : `${data.level}/10`;
-        document.getElementById('ins-out').innerText = p.isSpecial ? "PASSIVE" : `${format(out, true)}`;
-        const b = document.getElementById('btn-upgrade');
-        if (!p.isSpecial) {
-            b.dataset.cost = cost;
-            b.innerHTML = data.level >= 10 ? "MAXED" : `UPGRADE 💵 $${format(cost)}`;
+    function buy(id) { 
+        const p = PLANTS.find(x=>x.id==id);
+        if(state.money >= p.cost) { 
+            state.money -= p.cost; state.grid[state.selectedIdx] = {id: p.id, level: 1}; 
+            sounds.buy.play(); selectCell(state.selectedIdx); 
         }
     }
 
-    function gameLoop() {
-        let total = 0;
-        state.grid.forEach((c) => { if(c && !PLANTS[c.id].isSpecial) total += (PLANTS[c.id].prod * Math.pow(2, c.level - 1)); });
-        const generation = total * (1 + state.tech.gridLv * 0.1) * (1 + state.tech.intern * 0.05 + state.tech.reality * 1.0 + state.tech.aiGod * 5.0);
-        state.money += (generation / 10) * (1 + state.tech.tax * 0.1 + state.tech.existFee * 2.0 + state.tech.voidPrint * 10.0);
-        
-        document.getElementById('money').innerText = format(state.money);
-        document.getElementById('pps').innerText = format(generation, true);
-        
-        document.querySelectorAll('.pixel-btn[data-cost]').forEach(b => {
-            const cost = parseFloat(b.dataset.cost);
-            const canAfford = state.money >= cost;
-            b.disabled = !canAfford;
-            b.classList.toggle('affordable', canAfford);
-            if (b.classList.contains('shop-buy-btn') || b.classList.contains('tech-buy-btn')) {
-                b.innerText = (canAfford ? "💵 " : "") + "$" + format(cost);
-            }
-        });
-
-        document.querySelectorAll('.card[data-cost]').forEach(card => {
-            const cost = parseFloat(card.dataset.cost);
-            if (state.money >= cost) { card.classList.remove('epic-card-inactive'); card.classList.add('epic-card-active'); }
-            else { card.classList.remove('epic-card-active'); card.classList.add('epic-card-inactive'); }
-        });
-        
-        if (generation > 0 && !state.mute) sounds.hum.volume = 0.1;
-    }
-
-    function renderGrid() {
-        for (let i = 0; i < 36; i++) {
-            const c = document.getElementById(`cell-${i}`);
-            c.className = 'cell' + (state.selectedIdx === i ? ' selected' : '');
-            c.textContent = ''; 
-            if(state.grid[i]) {
-                const p = PLANTS[state.grid[i].id];
-                const workingClass = !p.isSpecial ? 'working-pulse' : '';
-                c.innerHTML = `<img src="assets/${p.img}" class="${workingClass}"><div class="lv-tag">${p.isSpecial ? 'SPEC' : 'Lv'+state.grid[i].level}</div>`;
-            }
+    function upgradeSelected() {
+        const cost = parseFloat(document.getElementById('btn-upgrade').dataset.cost);
+        if(state.money >= cost && state.grid[state.selectedIdx].level < 10) {
+            state.money -= cost; state.grid[state.selectedIdx].level++; selectCell(state.selectedIdx);
         }
     }
 
-    function showTab(t) {
-        document.getElementById('grid-view').style.display = (t==='grid'?'contents':'none');
-        document.getElementById('tech-view').classList.toggle('hidden', t!=='tech');
-        document.getElementById('tab-grid-btn').classList.toggle('active', t==='grid');
-        document.getElementById('tab-tech-btn').classList.toggle('active', t==='tech');
-        if (t === 'tech') renderTech();
-    }
+    function deconstructSelected() { state.grid[state.selectedIdx] = null; selectCell(state.selectedIdx); }
+    function showTab(t) { document.getElementById('grid-view').style.display = (t=='grid'?'contents':'none'); document.getElementById('tech-view').classList.toggle('hidden', t!='tech'); if(t=='tech') renderTech(); }
 
     function renderTech() {
         const cont = document.getElementById('tech-container'); cont.innerHTML = '';
-        if (state.tier < 4) {
-            const cost = (2500000 * Math.pow(2, state.tier - 1)) * Math.pow(10, state.tier - 1) * 10;
-            createTech(cont, "EVOLVE AGE", cost, "Change the laws of physics and your debt limit.", () => { state.tier++; updateUI(); });
-        }
-        createTech(cont, "SENTIENT TOASTERS", 5000 * Math.pow(4, state.tech.toaster), "Appliances work as contractors. +5% Power.", () => state.tech.toaster++);
-        createTech(cont, "GRAVITY TAXATION", 25000 * Math.pow(5, state.tech.gravity), "Charging matter for the right to fall. +10% Cash.", () => state.tech.gravity++);
-        createEpic(cont, "REALITY SPLITTING SERVERS", 1e12, "Production x2 via timeline hacking.", () => state.tech.reality++);
-        createEpic(cont, "THE SINGULARITY CEO", 1e21, "Replace yourself with a silicon god. Production x5.", () => state.tech.aiGod++);
-        createEpic(cont, "VOID-MATTER PRINTING", 1e24, "Cash Revenue x10.", () => state.tech.voidPrint++);
+        const normalTechs = [
+            ["MANUAL INTERNS", "Tiny digital hands spin dynamos. +5% Power.", 5000],
+            ["TAX EVASION", "Revenue boosts when IRS can't find you. +10% Cash.", 25000],
+            ["SENTIENT CHAIRS", "Furniture that discourages breaks. +5% Yield.", 100000],
+            ["LOBBYING", "Bribe physics into lower level costs. -5% Upgrade Cost.", 500000],
+            ["ESPRESSO IV", "Scientists vibrate at 400Hz. +5% Power.", 2e6],
+            ["RECYCLED SOOT", "Market waste as 'charcoal masks'. +5% Cash.", 1e7],
+            ["AI EGO STROKING", "Flatter the grid for +10% Power.", 5e7],
+            ["ATMOSPHERIC SCULPTING", "Smog is just 'artistic clouds'. +10% Cash.", 2e8],
+            ["GRAVITY TAX", "Charge the universe for falling. +10% Cash.", 1e9],
+            ["QUANTUM COINS", "Statistically, we should have more money. +10% Cash.", 5e9]
+        ];
+        normalTechs.forEach((t, i) => {
+            const cost = t[2] * Math.pow(5, state.tech.normal[i]);
+            createTech(cont, t[0], cost, t[1], () => state.tech.normal[i]++);
+        });
+        const epicTechs = [
+            ["SINGULARITY CEO", "Replace yourself with silicon god. x5 Power.", 1e12],
+            ["GALAXY SUB FEES", "Existence subscription fees. x10 Revenue.", 1e18],
+            ["REVERSED ENTROPY", "Bills are now income. +50% Yield.", 1e24],
+            ["REALITY SPLIT", "Run in two grids at once. Production x2.", 1e30],
+            ["VOID FORGERY", "Create cash from void matter. x10 Revenue.", 1e36]
+        ];
+        epicTechs.forEach((t, i) => {
+            createEpic(cont, t[0], t[2], t[1], () => state.tech.epic[i]++);
+        });
     }
 
     function createTech(cont, label, cost, sub, action) {
         const card = document.createElement('div'); card.className = 'card';
         card.innerHTML = `<span class="card-title">${label}</span><span class="card-sub">${sub}</span><button class="pixel-btn tech-buy-btn" data-cost="${cost}">$${format(cost)}</button>`;
-        card.querySelector('button').onclick = () => { if(state.money >= cost) { state.money -= cost; action(); sounds.buy.play(); triggerShake(); renderTech(); }};
+        card.querySelector('button').onclick = () => { if(state.money >= cost) { state.money -= cost; action(); renderTech(); }};
         cont.appendChild(card);
     }
 
     function createEpic(cont, label, cost, sub, action) {
-        const card = document.createElement('div'); card.className = 'card epic-card epic-card-inactive'; card.dataset.cost = cost;
+        const card = document.createElement('div'); card.className = 'card epic'; card.dataset.cost = cost;
         card.innerHTML = `<span class="card-title" style="color:#fff; text-shadow:0 0 5px var(--accent)">★ EPIC: ${label} ★</span><span class="card-sub">${sub}</span><button class="pixel-btn tech-buy-btn" data-cost="${cost}">$${format(cost)}</button>`;
-        card.querySelector('button').onclick = () => { if(state.money >= cost) { state.money -= cost; action(); sounds.buy.play(); triggerShake(); renderTech(); }};
+        card.querySelector('button').onclick = () => { if(state.money >= cost) { state.money -= cost; action(); renderTech(); }};
         cont.appendChild(card);
     }
 
-    function upgradeSelected() {
-        const data = state.grid[state.selectedIdx];
-        const p = PLANTS[data.id];
-        const cost = Math.floor(p.cost * Math.pow(1.5 + (p.rarity / 10), data.level));
-        if(state.money >= cost && data.level < 10) { state.money -= cost; data.level++; sounds.buy.play(); triggerShake(); renderGrid(); updateInspector(); }
-    }
-
-    function deconstructSelected() {
-        state.money += Math.floor(PLANTS[state.grid[state.selectedIdx].id].cost * 0.4);
-        state.grid[state.selectedIdx] = null; selectCell(state.selectedIdx); renderGrid();
-    }
-
     function updateUI() { document.body.setAttribute('data-tier', state.tier); document.getElementById('logo').src = `assets/logo${state.tier}.png`; }
-    function toggleMute() { state.mute = !state.mute; document.getElementById('mute-toggle').innerText = state.mute ? "🔇" : "🔊"; if(state.mute) sounds.hum.pause(); }
+    function toggleMute() { state.mute = !state.mute; document.getElementById('mute-toggle').innerText = state.mute ? "🔇" : "🔊"; updateVol(); }
 </script>
 </body>
 </html>
