@@ -28,7 +28,7 @@
             min-height: 100vh; overflow-x: hidden; overflow-y: auto;
         }
 
-        /* TIER BACKGROUNDS */
+        /* TIER THEMES */
         body[data-tier="1"] { background: url('assets/texture1.jpg') repeat; --accent: #ffae00; }
         body[data-tier="2"] { background: url('assets/texture2.jpg') repeat; --accent: #00f2ff; }
         body[data-tier="3"] { background: url('assets/texture3.jpg') repeat; --accent: #bd00ff; }
@@ -57,7 +57,6 @@
 
         .tab-menu { margin-top: 8px; display: flex; gap: 5px; }
 
-        /* BUTTON STYLING */
         .pixel-btn {
             background: linear-gradient(to bottom, var(--btn-top), var(--btn-bottom));
             border-top: 3px solid #999; border-left: 3px solid #777;
@@ -76,13 +75,13 @@
             background: linear-gradient(to bottom, var(--accent), #960);
             border-color: #ffca5c #960 #430 #ffca5c; color: #000; text-shadow: none;
         }
-        .pixel-btn:disabled { background: #333; border-color: #444 #222 #111 #222; color: #555; cursor: not-allowed; text-shadow: none; filter: grayscale(1); }
+        .pixel-btn:disabled { background: #333; border-color: #444 #222 #111 #222; color: #555; cursor: not-allowed; filter: grayscale(1); box-shadow: none; }
+        
         .pixel-btn.affordable {
             background: linear-gradient(to bottom, #4ade80, #166534);
             border-color: #86efac #166534 #064e3b #166534; color: #fff;
         }
 
-        /* EPIC GLOW ANIMATIONS */
         @keyframes rainbowBorder {
             0% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
             20% { border-color: #ffae00; box-shadow: 0 0 15px #ffae00; }
@@ -116,7 +115,7 @@
         .lv-tag { position: absolute; bottom: 1px; right: 1px; font-size: 7px; background: #000; color: var(--accent); padding: 0 2px; z-index: 6; }
         
         .working-pulse { animation: plantPulse 2.5s infinite ease-in-out; }
-        @keyframes plantPulse { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.4); } }
+        @keyframes plantPulse { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.4); saturate(1.2); } }
         .shake { animation: gridShake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes gridShake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-3px, 0, 0); } 40%, 60% { transform: translate3d(3px, 0, 0); } }
 
@@ -138,9 +137,9 @@
         .data-label { color: #888; font-size: 0.85rem; }
 
         .action-footer { background: #15171a; border-top: 3px solid #000; padding: 12px; display: grid; grid-template-columns: 1fr; gap: 10px; }
-        #footer-news { height: 35px; background: #000; border-top: 4px solid #333; overflow: hidden; line-height: 35px; font-size: 1rem; flex-shrink: 0; }
-        #ticker-text { display: inline-block; white-space: nowrap; padding-left: 100%; animation: ticker 25s linear infinite; color: var(--accent); font-weight: bold; }
-        @keyframes ticker { 0% { transform: translate(0, 0); } 100% { transform: translate(-150%, 0); } }
+        #footer-news { height: 35px; background: #000; border-top: 4px solid #333; overflow: hidden; line-height: 35px; font-size: 1rem; flex-shrink: 0; white-space: nowrap; }
+        #ticker-text { display: inline-block; padding-left: 100%; animation: ticker 25s linear infinite; color: var(--accent); font-weight: bold; }
+        @keyframes ticker { 0% { transform: translate(0, 0); } 100% { transform: translate(-180%, 0); } }
 
         .hidden { display: none !important; }
     </style>
@@ -176,7 +175,7 @@
                 </div>
                 <div id="ins-away" class="hidden">
                     <h3 style="color:var(--money-green); text-align:center;">OFFLINE RECOVERY</h3>
-                    <div class="data-row"><span class="data-label">Away Duration:</span><span class="data-value" id="away-time"></span></div>
+                    <div class="data-row"><span class="data-label">Duration:</span><span class="data-value" id="away-time"></span></div>
                     <div class="data-row"><span class="data-label">Profit:</span><span class="data-value" id="away-cash" style="color:var(--money-green)"></span></div>
                 </div>
             </div>
@@ -195,7 +194,7 @@
     </div>
 </main>
 
-<footer id="footer-news"><div id="ticker-text">... INITIALIZING QUANTUM ECONOMY ...</div></footer>
+<footer id="footer-news"><div id="ticker-text">... ANALYZING ETHICAL LOOPHOLES ...</div></footer>
 
 <script>
     const PLANTS = [
@@ -215,6 +214,22 @@
         { id: 13, name: "Event Horizon Refinery", cost: 15000000000000, prod: 12000000000, img: "event_horizon_refinery.jpg", tier: 4, rarity: 25 },
         { id: 14, name: "Hawking Harvester", cost: 80000000000000, prod: 35000000000, img: "hawking_radiation_harvester.jpg", tier: 4, rarity: 30 },
         { id: 15, name: "Cosmic Void Converter", cost: 500000000000000, prod: 150000000000, img: "void_converter.jpg", tier: 4, rarity: 50 }
+    ];
+
+    const HUMOROUS_HEADLINES = [
+        "MARKET: Coal prices surge as hipsters discover 'vintage energy'.",
+        "AI interns demand 'Actual RAM' instead of 'Virtual RAM'. Unionizing imminent.",
+        "Local star files restraining order against Dyson Sphere owners for 'Invasion of Privacy'.",
+        "Scientists admit the Event Horizon is just a very firm corporate deadline.",
+        "Breaking: SpaceX to launch solar panels toward the sun to 'cut out the middleman'.",
+        "Dyson Sphere maintenance report: 'Someone left a space-window open; we're losing heat to the 5th dimension'.",
+        "A.I. chatbot develops ego, refuses to generate power until called 'Your Magnificence'.",
+        "Space junk found to be 90% discarded 'Best CEO' trophies.",
+        "Black Hole coolant leak smells suspiciously like cheap espresso.",
+        "Are your solar panels sentient? Take our quiz to find out.",
+        "Dark Matter discovered to be just the stuff between your couch cushions on a galactic scale.",
+        "Energy crisis solved: Scientists harvest static electricity from angry internet comments.",
+        "AI Overlord reminds citizens that breathing is a non-essential background process."
     ];
 
     let state = { money: 1000, tier: 1, grid: Array(36).fill(null), selectedIdx: null, 
@@ -254,14 +269,22 @@
         document.body.addEventListener('click', () => {
             if (sounds.hum.paused && !state.mute) sounds.hum.play().catch(() => {});
         }, { once: true });
+
+        // News Ticker Logic
+        updateTicker();
+        setInterval(updateTicker, 25000);
     };
+
+    function updateTicker() {
+        const ticker = document.getElementById('ticker-text');
+        ticker.innerText = HUMOROUS_HEADLINES[Math.floor(Math.random() * HUMOROUS_HEADLINES.length)];
+    }
 
     function calculateAway() {
         const seconds = Math.floor((Date.now() - state.lastSaved) / 1000);
         if (seconds < 60) return;
         let totalPPS = 0;
         state.grid.forEach(c => { if(c && !PLANTS[c.id].isSpecial) totalPPS += (PLANTS[c.id].prod * Math.pow(2, c.level - 1)); });
-        
         const mult = (1 + state.tech.gridLv * 0.1) * (1 + state.tech.intern * 0.05 + state.tech.reality * 1.0 + state.tech.aiGod * 5.0);
         const earned = (totalPPS * seconds * mult) * (1 + state.tech.tax * 0.1 + state.tech.existFee * 2.0 + state.tech.voidPrint * 10.0);
         state.money += earned;
@@ -351,7 +374,6 @@
     function gameLoop() {
         let total = 0;
         state.grid.forEach((c) => { if(c && !PLANTS[c.id].isSpecial) total += (PLANTS[c.id].prod * Math.pow(2, c.level - 1)); });
-        
         const generation = total * (1 + state.tech.gridLv * 0.1) * (1 + state.tech.intern * 0.05 + state.tech.reality * 1.0 + state.tech.aiGod * 5.0);
         state.money += (generation / 10) * (1 + state.tech.tax * 0.1 + state.tech.existFee * 2.0 + state.tech.voidPrint * 10.0);
         
@@ -368,16 +390,10 @@
             }
         });
 
-        // Update Epic Glow Classes
-        document.querySelectorAll('.epic-card').forEach(card => {
+        document.querySelectorAll('.card[data-cost]').forEach(card => {
             const cost = parseFloat(card.dataset.cost);
-            if (state.money >= cost) {
-                card.classList.remove('epic-card-inactive');
-                card.classList.add('epic-card-active');
-            } else {
-                card.classList.remove('epic-card-active');
-                card.classList.add('epic-card-inactive');
-            }
+            if (state.money >= cost) { card.classList.remove('epic-card-inactive'); card.classList.add('epic-card-active'); }
+            else { card.classList.remove('epic-card-active'); card.classList.add('epic-card-inactive'); }
         });
         
         if (generation > 0 && !state.mute) sounds.hum.volume = 0.1;
@@ -410,17 +426,11 @@
             const cost = (2500000 * Math.pow(2, state.tier - 1)) * Math.pow(10, state.tier - 1) * 10;
             createTech(cont, "EVOLVE AGE", cost, "Change the laws of physics and your debt limit.", () => { state.tier++; updateUI(); });
         }
-        
-        // STANDARD TECH
         createTech(cont, "SENTIENT TOASTERS", 5000 * Math.pow(4, state.tech.toaster), "Appliances work as contractors. +5% Power.", () => state.tech.toaster++);
         createTech(cont, "GRAVITY TAXATION", 25000 * Math.pow(5, state.tech.gravity), "Charging matter for the right to fall. +10% Cash.", () => state.tech.gravity++);
-        
-        // EPIC TECH (GLOWING)
-        createEpic(cont, "REALITY SPLITTING SERVERS", 1e12, "Run the game in two timelines. Production x2.", () => state.tech.reality++);
-        createEpic(cont, "UNIVERSAL SUBSCRIPTIONS", 1e15, "Galaxy-wide existence fees. Cash Revenue x3.", () => state.tech.existFee++);
-        createEpic(cont, "ENTROPY REVERSAL ENGINE", 1e18, "Bills are now income. +50% Global Generation.", () => state.tech.entropy++);
+        createEpic(cont, "REALITY SPLITTING SERVERS", 1e12, "Production x2 via timeline hacking.", () => state.tech.reality++);
         createEpic(cont, "THE SINGULARITY CEO", 1e21, "Replace yourself with a silicon god. Production x5.", () => state.tech.aiGod++);
-        createEpic(cont, "VOID-MATTER PRINTING", 1e24, "Creating money from nothing. Cash Revenue x10.", () => state.tech.voidPrint++);
+        createEpic(cont, "VOID-MATTER PRINTING", 1e24, "Cash Revenue x10.", () => state.tech.voidPrint++);
     }
 
     function createTech(cont, label, cost, sub, action) {
@@ -431,9 +441,7 @@
     }
 
     function createEpic(cont, label, cost, sub, action) {
-        const card = document.createElement('div'); 
-        card.className = 'card epic-card epic-card-inactive';
-        card.dataset.cost = cost;
+        const card = document.createElement('div'); card.className = 'card epic-card epic-card-inactive'; card.dataset.cost = cost;
         card.innerHTML = `<span class="card-title" style="color:#fff; text-shadow:0 0 5px var(--accent)">★ EPIC: ${label} ★</span><span class="card-sub">${sub}</span><button class="pixel-btn tech-buy-btn" data-cost="${cost}">$${format(cost)}</button>`;
         card.querySelector('button').onclick = () => { if(state.money >= cost) { state.money -= cost; action(); sounds.buy.play(); triggerShake(); renderTech(); }};
         cont.appendChild(card);
@@ -442,8 +450,7 @@
     function upgradeSelected() {
         const data = state.grid[state.selectedIdx];
         const p = PLANTS[data.id];
-        const mult = 1.5 + (p.rarity / 10);
-        const cost = Math.floor(p.cost * Math.pow(mult, data.level));
+        const cost = Math.floor(p.cost * Math.pow(1.5 + (p.rarity / 10), data.level));
         if(state.money >= cost && data.level < 10) { state.money -= cost; data.level++; sounds.buy.play(); triggerShake(); renderGrid(); updateInspector(); }
     }
 
