@@ -28,6 +28,7 @@
             min-height: 100vh; overflow-x: hidden; overflow-y: auto;
         }
 
+        /* TIER THEMES */
         body[data-tier="1"] { background: url('assets/texture1.jpg') repeat; --accent: #ffae00; }
         body[data-tier="2"] { background: url('assets/texture2.jpg') repeat; --accent: #00f2ff; }
         body[data-tier="3"] { background: url('assets/texture3.jpg') repeat; --accent: #bd00ff; }
@@ -69,6 +70,13 @@
             text-shadow: 1px 1px 0 #000;
         }
         .pixel-btn:active:not(:disabled) { transform: translateY(2px); border-top: 3px solid #111; border-bottom: 3px solid #999; }
+        
+        .pixel-btn.active { 
+            background: linear-gradient(to bottom, var(--accent), #960); 
+            border-color: #ffca5c #960 #430 #ffca5c;
+            color: #000; text-shadow: none; 
+        }
+
         .pixel-btn:disabled { background: #333; border-color: #444 #222 #111 #222; color: #555; cursor: not-allowed; filter: grayscale(1); }
         .pixel-btn.affordable { background: linear-gradient(to bottom, #4ade80, #166534); border-color: #86efac #166534 #064e3b #166534; color: #fff; }
 
@@ -80,8 +88,8 @@
             66% { border-color: #0000ff; box-shadow: 0 0 15px #0000ff; }
             100% { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
         }
-        .card.epic-unaffordable { animation: silverPulse 2s infinite ease-in-out; border-width: 3px !important; }
-        .card.epic-affordable { animation: rainbowEpic 1.5s linear infinite; border-width: 3px !important; }
+        .card.epic-unaffordable { animation: silverPulse 2s infinite ease-in-out; border-width: 3px !important; filter: grayscale(0.5); }
+        .card.epic-affordable { animation: rainbowEpic 1s linear infinite; border-width: 3px !important; filter: none; }
 
         #main-stage {
             flex: 1; display: flex; flex-direction: row; flex-wrap: wrap;
@@ -191,44 +199,60 @@
         { id: 15, name: "Cosmic Void Converter", cost: 5e14, prod: 1.5e11, rarity: 50, tier: 4, img: "void_converter.jpg" }
     ];
 
-    const NEWS = ["MARKET: Coal prices surge as hipsters discover 'vintage energy'.", "AI interns demand 'Actual RAM' instead of 'Virtual RAM'. Unionizing imminent.", "Scientists admit the Event Horizon is just a very firm corporate deadline."];
+    const HUMOROUS_NEWS = [
+        "MARKET: Coal prices surge as hipsters discover 'vintage energy'.",
+        "AI interns demand 'Actual RAM' instead of 'Virtual RAM'. Unionizing imminent.",
+        "Scientists admit the Event Horizon is just a firm corporate deadline.",
+        "OSHA search called off for inspector who fell into the Singularity.",
+        "Local star sues Dyson Sphere owners for 'Invasion of Privacy'."
+    ];
 
     let state = { money: 1000, tier: 1, grid: Array(36).fill(null), selectedIdx: null, 
         tech: { gridLv: 0, tax: 0, dmMult: 1, universeFee: 0, normal: Array(10).fill(0), epic: Array(5).fill(0) }, 
         mute: false, volume: 0.1, lastSaved: Date.now() };
 
     const sounds = { buy: new Audio('assets/buy.mp3'), hum: new Audio('assets/hum.mp3') };
-    sounds.hum.loop = true; // Loop audio continuously
+    sounds.hum.loop = true; 
 
+    // FIXED FORMAT ENGINE: Support up to Quindecillion
     function format(num, isPower = false) {
         if (num === undefined || isNaN(num) || num === null) return "0";
         if (num === 0) return "0";
-        const prefixes = isPower ? ['', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'] : ['', 'K', 'M', 'B', 'T', 'Q', 'Qi', 'Sx', 'Sp'];
+        const prefixes = isPower ? ['', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'] : ['', 'K', 'M', 'B', 'T', 'Q', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc', 'Ud', 'Dd', 'Td', 'Qad', 'Qid'];
         const i = Math.floor(Math.log10(Math.abs(num)) / 3);
         if (i <= 0) return Math.floor(num) + (isPower ? 'W' : '');
-        return (num / Math.pow(1000, i)).toFixed(2).replace(/\.00$/, '') + prefixes[i] + (isPower ? 'W' : '');
+        const suffix = prefixes[i] !== undefined ? prefixes[i] : '??';
+        return (num / Math.pow(1000, i)).toFixed(2).replace(/\.00$/, '') + suffix + (isPower ? 'W' : '');
     }
 
     window.onload = () => {
-        const saved = localStorage.getItem('energyTycoon_Audio_v1');
+        const saved = localStorage.getItem('energyTycoon_Final_v18');
         if (saved) {
             const loaded = JSON.parse(saved);
-            state = {...state, ...loaded, tech: {...state.tech, ...loaded.tech}};
+            state = {...state, ...loaded, tech: {...state.tech, ...loaded.tech}}; 
         }
         document.getElementById('volume-slider').value = state.volume;
-        createGrid(); renderGrid(); updateUI(); updateVol();
+        createGrid(); renderGrid(); updateUI();
         setInterval(gameLoop, 100);
-        setInterval(() => { state.lastSaved = Date.now(); localStorage.setItem('energyTycoon_Audio_v1', JSON.stringify(state)); }, 5000);
-        setInterval(() => document.getElementById('ticker-text').innerText = NEWS[Math.floor(Math.random()*NEWS.length)], 15000);
+        setInterval(() => { state.lastSaved = Date.now(); localStorage.setItem('energyTycoon_Final_v18', JSON.stringify(state)); }, 5000);
+        setInterval(() => document.getElementById('ticker-text').innerText = HUMOROUS_NEWS[Math.floor(Math.random()*HUMOROUS_NEWS.length)], 15000);
         
-        document.getElementById('volume-slider').oninput = e => { state.volume = parseFloat(e.target.value); updateVol(); };
-        document.addEventListener('click', () => { if (sounds.hum.paused && !state.mute) sounds.hum.play().catch(()=>{}); }, {once: true});
+        // SLIDER LOGIC
+        document.getElementById('volume-slider').oninput = e => { 
+            state.volume = parseFloat(e.target.value); 
+            updateVol(); 
+        };
+        document.addEventListener('click', () => { 
+            if (sounds.hum.paused && !state.mute) {
+                sounds.hum.play().catch(()=>{}); 
+                updateVol();
+            }
+        }, {once: true});
     };
 
     function updateVol() { 
-        const v = state.mute ? 0 : state.volume;
-        sounds.hum.volume = v;
-        sounds.buy.volume = Math.min(v * 2, 1); // Scale SFX slightly louder
+        sounds.hum.volume = state.mute ? 0 : state.volume; 
+        sounds.buy.volume = state.mute ? 0 : 0.5; 
     }
 
     function calculatePPS() {
@@ -237,7 +261,8 @@
             const p = PLANTS.find(x=>x.id==c.id) || PLANTS[0];
             total += (p.prod * Math.pow(2, c.level - 1));
         }});
-        return total * (1 + state.tech.gridLv * 0.1) * (1 + state.tech.normal[2] * 0.05 + state.tech.epic[0] * 5.0);
+        const powerMult = (1 + state.tech.gridLv * 0.1) * (1 + state.tech.normal[0] * 0.05 + state.tech.epic[0] * 5.0);
+        return total * powerMult;
     }
 
     function gameLoop() {
@@ -246,7 +271,7 @@
         document.getElementById('money').innerText = format(state.money);
         document.getElementById('pps').innerText = format(pps, true);
         
-        // --- DIAGNOSTICS READOUT ---
+        // REFRESH DIAGNOSTICS
         if (state.selectedIdx !== null && state.grid[state.selectedIdx]) {
             const data = state.grid[state.selectedIdx];
             const p = PLANTS.find(x=>x.id==data.id) || PLANTS[0];
@@ -254,13 +279,14 @@
             document.getElementById('ins-out').innerText = `${format(p.prod * Math.pow(2, data.level-1), true)}/s`;
         }
 
-        // Button/Epic visual states
+        // BUTTONS & EPIC GLOW
         document.querySelectorAll('.pixel-btn[data-cost]').forEach(b => {
             const cost = parseFloat(b.dataset.cost);
-            b.disabled = state.money < cost;
-            b.classList.toggle('affordable', state.money >= cost);
+            const canAfford = state.money >= cost;
+            b.disabled = !canAfford;
+            b.classList.toggle('affordable', canAfford);
             if (b.classList.contains('shop-buy-btn') || b.classList.contains('tech-buy-btn')) {
-                b.innerText = (state.money >= cost ? "💵 " : "") + "$" + format(cost);
+                b.innerText = (canAfford ? "💵 " : "") + "$" + format(cost);
             }
         });
 
@@ -270,9 +296,10 @@
             c.classList.toggle('epic-unaffordable', !canAfford);
         });
 
-        // --- AUDIO ENGINE LOGIC ---
+        // AUDIO RESUME CHECK
         if (pps > 0 && !state.mute) {
             if (sounds.hum.paused) sounds.hum.play().catch(()=>{});
+            updateVol();
         } else {
             sounds.hum.pause();
         }
@@ -297,6 +324,14 @@
                 c.innerHTML = `<img src="assets/${p.img}" class="working-pulse"><div class="lv-tag">Lv${state.grid[i].level}</div>`;
             }
         }
+    }
+
+    function showTab(t) { 
+        document.getElementById('grid-view').style.display = (t=='grid'?'contents':'none'); 
+        document.getElementById('tech-view').classList.toggle('hidden', t!='tech'); 
+        document.getElementById('tab-grid-btn').classList.toggle('active', t=='grid');
+        document.getElementById('tab-tech-btn').classList.toggle('active', t=='tech');
+        if(t=='tech') renderTech(); 
     }
 
     function selectCell(idx) {
@@ -325,19 +360,15 @@
         const cont = document.getElementById('shop-items'); cont.innerHTML = '';
         PLANTS.filter(p => p.tier <= state.tier).forEach(p => {
             const card = document.createElement('div'); card.className = 'card';
-            card.style.display = "flex"; card.style.gap = "12px"; card.style.cursor = "pointer";
-            card.onclick = () => buy(p.id);
-            card.innerHTML = `<img src="assets/${p.img}" class="card-img"><div style="flex:1"><span class="card-title">${p.name}</span><button class="pixel-btn shop-buy-btn" data-cost="${p.cost}">$${format(p.cost)}</button></div>`;
+            card.style.display = "flex"; card.style.gap = "12px";
+            card.innerHTML = `<img src="assets/${p.img}" class="card-img"><div style="flex:1"><span class="card-title">${p.name}</span><button class="pixel-btn shop-buy-btn" data-cost="${p.cost}" onclick="buy(${p.id})">$${format(p.cost)}</button></div>`;
             cont.appendChild(card);
         });
     }
 
     function buy(id) { 
         const p = PLANTS.find(x=>x.id==id);
-        if(state.money >= p.cost) { 
-            state.money -= p.cost; state.grid[state.selectedIdx] = {id: p.id, level: 1}; 
-            sounds.buy.play(); selectCell(state.selectedIdx); 
-        }
+        if(state.money >= p.cost) { state.money -= p.cost; state.grid[state.selectedIdx] = {id: p.id, level: 1}; sounds.buy.play(); selectCell(state.selectedIdx); }
     }
 
     function upgradeSelected() {
@@ -348,36 +379,13 @@
     }
 
     function deconstructSelected() { state.grid[state.selectedIdx] = null; selectCell(state.selectedIdx); }
-    function showTab(t) { document.getElementById('grid-view').style.display = (t=='grid'?'contents':'none'); document.getElementById('tech-view').classList.toggle('hidden', t!='tech'); if(t=='tech') renderTech(); }
 
     function renderTech() {
         const cont = document.getElementById('tech-container'); cont.innerHTML = '';
-        const normalTechs = [
-            ["MANUAL INTERNS", "Tiny digital hands spin dynamos. +5% Power.", 5000],
-            ["TAX EVASION", "Revenue boosts when IRS can't find you. +10% Cash.", 25000],
-            ["SENTIENT CHAIRS", "Furniture that discourages breaks. +5% Yield.", 100000],
-            ["LOBBYING", "Bribe physics into lower level costs. -5% Upgrade Cost.", 500000],
-            ["ESPRESSO IV", "Scientists vibrate at 400Hz. +5% Power.", 2e6],
-            ["RECYCLED SOOT", "Market waste as 'charcoal masks'. +5% Cash.", 1e7],
-            ["AI EGO STROKING", "Flatter the grid for +10% Power.", 5e7],
-            ["ATMOSPHERIC SCULPTING", "Smog is just 'artistic clouds'. +10% Cash.", 2e8],
-            ["GRAVITY TAX", "Charge the universe for falling. +10% Cash.", 1e9],
-            ["QUANTUM COINS", "Statistically, we should have more money. +10% Cash.", 5e9]
-        ];
-        normalTechs.forEach((t, i) => {
-            const cost = t[2] * Math.pow(5, state.tech.normal[i]);
-            createTech(cont, t[0], cost, t[1], () => state.tech.normal[i]++);
-        });
-        const epicTechs = [
-            ["SINGULARITY CEO", "Replace yourself with silicon god. x5 Power.", 1e12],
-            ["GALAXY SUB FEES", "Existence subscription fees. x10 Revenue.", 1e18],
-            ["REVERSED ENTROPY", "Bills are now income. +50% Yield.", 1e24],
-            ["REALITY SPLIT", "Run in two grids at once. Production x2.", 1e30],
-            ["VOID FORGERY", "Create cash from void matter. x10 Revenue.", 1e36]
-        ];
-        epicTechs.forEach((t, i) => {
-            createEpic(cont, t[0], t[2], t[1], () => state.tech.epic[i]++);
-        });
+        const nTech = [["MANUAL INTERNS", "Tiny hands clean soot. +5% Power.", 5000], ["TAX EVASION", "The IRS can't find you. +10% Cash.", 25000], ["SENTIENT CHAIRS", "Furniture that forbids breaks. +5% Yield.", 100000], ["LOBBYING", "Bribe physics into lower costs. -5% Price.", 5e5], ["ESPRESSO IV", "Scientists vibrate at 400Hz. +5% Power.", 2e6], ["RECYCLED SOOT", "Reactor waste as 'charcoal masks'. +5% Cash.", 1e7], ["AI EGO STROKING", "Flatter the grid for +10% Power.", 5e7], ["ATMOSPHERIC SCULPTING", "Smog is just 'artistic clouds'. +10% Cash.", 2e8], ["GRAVITY FEES", "Charge for falling. +10% Cash.", 1e9], ["QUANTUM COINS", "Statistically wealthier. +10% Cash.", 5e9]];
+        nTech.forEach((t, i) => { const cost = t[2] * Math.pow(5, state.tech.normal[i]); createTech(cont, t[0], cost, t[1], () => state.tech.normal[i]++); });
+        const eTech = [["SINGULARITY CEO", "x5 Production.", 1e12], ["UNIVERSE SUBS", "x10 Revenue.", 1e18], ["REVERSED ENTROPY", "+50% Yield.", 1e24], ["REALITY SPLIT", "Production x2.", 1e30], ["VOID FORGERY", "x10 Cash.", 1e36]];
+        eTech.forEach((t, i) => { const cost = t[2] * Math.pow(10, state.tech.epic[i]); createEpic(cont, t[0], cost, t[1], () => state.tech.epic[i]++); });
     }
 
     function createTech(cont, label, cost, sub, action) {
@@ -389,7 +397,7 @@
 
     function createEpic(cont, label, cost, sub, action) {
         const card = document.createElement('div'); card.className = 'card epic'; card.dataset.cost = cost;
-        card.innerHTML = `<span class="card-title" style="color:#fff; text-shadow:0 0 5px var(--accent)">★ EPIC: ${label} ★</span><span class="card-sub">${sub}</span><button class="pixel-btn tech-buy-btn" data-cost="${cost}">$${format(cost)}</button>`;
+        card.innerHTML = `<span class="card-title" style="color:#fff">★ EPIC: ${label} ★</span><span class="card-sub">${sub}</span><button class="pixel-btn tech-buy-btn" data-cost="${cost}">$${format(cost)}</button>`;
         card.querySelector('button').onclick = () => { if(state.money >= cost) { state.money -= cost; action(); renderTech(); }};
         cont.appendChild(card);
     }
